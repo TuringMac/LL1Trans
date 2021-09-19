@@ -10,14 +10,14 @@ namespace LL1Trans
     }
 
     /// <summary>
-    /// S -> E
     /// E -> T E’
     /// E’ -> + T E’
     /// E’ -> Λ
     /// T -> F T’
     /// T’ -> * F T’
     /// T’ -> Λ
-    /// F -> 0|1|2|3|4|5|6|7|8|9
+    /// F -> n
+    /// F -> ( E )
     /// </summary>
     class Parser
     {
@@ -50,7 +50,7 @@ namespace LL1Trans
         {
             row = input;
             symbol = yylex();
-            int y = E(0);
+            int y = E();
 
             return y;
         }
@@ -84,12 +84,7 @@ namespace LL1Trans
             }
         }
 
-        int S(int inh)
-        {
-            return E(inh);
-        }
-
-        int E(int inh) /// E -> T E’
+        int E() /// E -> T E’
         {
             switch (symbol)
             {
@@ -103,6 +98,7 @@ namespace LL1Trans
                 case Term.Digit7:
                 case Term.Digit8:
                 case Term.Digit9:
+                case Term.LBr:
                     return EP(T());
                 default: throw new ParseException();
             }
@@ -118,6 +114,7 @@ namespace LL1Trans
                 case Term.Minus:
                     symbol = yylex();
                     return EP(inh - T());
+                case Term.RBr:
                 case Term.End: return inh; // E' -> Λ
                 default: throw new ParseException();
             }
@@ -137,6 +134,7 @@ namespace LL1Trans
                 case Term.Digit7:
                 case Term.Digit8:
                 case Term.Digit9:
+                case Term.LBr:
                     return TP(F());
                 default: throw new ParseException();
             }
@@ -153,7 +151,8 @@ namespace LL1Trans
                     symbol = yylex();
                     return TP(inh / F());
                 case Term.Minus:
-                case Term.Plus: return inh;
+                case Term.Plus:
+                case Term.RBr:
                 case Term.End: return inh; // T' -> Λ
                 default: throw new ParseException();
             }
@@ -176,6 +175,9 @@ namespace LL1Trans
                     int synt = (int)symbol;
                     symbol = yylex();
                     return synt;
+                case Term.LBr:
+                    symbol = yylex();
+                    return E();
                 default: throw new ParseException();
             }
         }
