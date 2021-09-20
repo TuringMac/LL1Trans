@@ -4,22 +4,22 @@ using System.Text;
 
 namespace LL1Trans
 {
-    class ParseException : Exception
+    public class ParseException : Exception
     {
 
     }
 
     /// <summary>
     /// E -> T E’
-    /// E’ -> + T E’
+    /// E’ -> + T E’ | - T E'
     /// E’ -> Λ
     /// T -> F T’
-    /// T’ -> * F T’
+    /// T’ -> * F T’ | / F T'
     /// T’ -> Λ
     /// F -> n
     /// F -> ( E )
     /// </summary>
-    class Parser
+    public class Parser
     {
         enum Term
         {
