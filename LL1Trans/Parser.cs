@@ -21,7 +21,7 @@ namespace LL1Trans
     /// </summary>
     public class Parser
     {
-        enum Term
+        public enum Term
         {
             End = -1,
             Digit0 = 0,
@@ -42,8 +42,8 @@ namespace LL1Trans
             RBr = 201
         }
 
-        Term symbol;
-        string row = "";
+        public Term symbol;
+        public string row = "";
         int i = 0;
 
         public int Calc(string input)
@@ -55,7 +55,7 @@ namespace LL1Trans
             return y;
         }
 
-        Term yylex()
+        public Term yylex()
         {
             if (i == row.Length)
                 return Term.End;
@@ -79,12 +79,11 @@ namespace LL1Trans
                 case '/': Console.WriteLine($"Read: {ch}"); return Term.Devide;
                 case '(': Console.WriteLine($"Read: {ch}"); return Term.LBr;
                 case ')': Console.WriteLine($"Read: {ch}"); return Term.RBr;
-                case '$': Console.WriteLine($"Read: {ch}"); return Term.End;
                 default: throw new ParseException();
             }
         }
 
-        int E() /// E -> T E’
+        public int E() /// E -> T E’
         {
             switch (symbol)
             {
@@ -104,7 +103,7 @@ namespace LL1Trans
             }
         }
 
-        int EP(int inh = 0) /// E’ -> + T E’ | Λ
+        public int EP(int inh = 0) /// E’ -> + T E’ | Λ
         {
             switch (symbol)
             {
@@ -120,7 +119,7 @@ namespace LL1Trans
             }
         }
 
-        int T() /// T -> F T’
+        public int T() /// T -> F T’
         {
             switch (symbol)
             {
@@ -140,7 +139,7 @@ namespace LL1Trans
             }
         }
 
-        int TP(int inh = 1) /// T’ -> * F T’ | Λ
+        public int TP(int inh = 1) /// T’ -> * F T’ | Λ
         {
             switch (symbol)
             {
@@ -158,7 +157,7 @@ namespace LL1Trans
             }
         }
 
-        int F() /// F -> 2 | 3 | 4
+        public int F() /// F -> 2 | 3 | 4
         {
             switch (symbol)
             {
