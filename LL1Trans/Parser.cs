@@ -61,46 +61,27 @@ namespace LL1Trans
                 return Term.End;
 
             char ch = row[i++];
-            switch (ch)
-            {
-                case '0': Console.WriteLine($"Read: {ch}"); return Term.Digit0;
-                case '1': Console.WriteLine($"Read: {ch}"); return Term.Digit1;
-                case '2': Console.WriteLine($"Read: {ch}"); return Term.Digit2;
-                case '3': Console.WriteLine($"Read: {ch}"); return Term.Digit3;
-                case '4': Console.WriteLine($"Read: {ch}"); return Term.Digit4;
-                case '5': Console.WriteLine($"Read: {ch}"); return Term.Digit5;
-                case '6': Console.WriteLine($"Read: {ch}"); return Term.Digit6;
-                case '7': Console.WriteLine($"Read: {ch}"); return Term.Digit7;
-                case '8': Console.WriteLine($"Read: {ch}"); return Term.Digit8;
-                case '9': Console.WriteLine($"Read: {ch}"); return Term.Digit9;
-                case '+': Console.WriteLine($"Read: {ch}"); return Term.Plus;
-                case '-': Console.WriteLine($"Read: {ch}"); return Term.Minus;
-                case '*': Console.WriteLine($"Read: {ch}"); return Term.Mul;
-                case '/': Console.WriteLine($"Read: {ch}"); return Term.Devide;
-                case '(': Console.WriteLine($"Read: {ch}"); return Term.LBr;
-                case ')': Console.WriteLine($"Read: {ch}"); return Term.RBr;
-                default: throw new ParseException();
-            }
+            if (char.IsDigit(ch))
+                return (Term)int.Parse(ch.ToString());
+            else
+                switch (ch)
+                {
+                    case '+': Console.WriteLine($"Read: {ch}"); return Term.Plus;
+                    case '-': Console.WriteLine($"Read: {ch}"); return Term.Minus;
+                    case '*': Console.WriteLine($"Read: {ch}"); return Term.Mul;
+                    case '/': Console.WriteLine($"Read: {ch}"); return Term.Devide;
+                    case '(': Console.WriteLine($"Read: {ch}"); return Term.LBr;
+                    case ')': Console.WriteLine($"Read: {ch}"); return Term.RBr;
+                    default: throw new ParseException();
+                }
         }
 
         public int E() /// E -> T E’
         {
-            switch (symbol)
-            {
-                case Term.Digit0:
-                case Term.Digit1:
-                case Term.Digit2:
-                case Term.Digit3:
-                case Term.Digit4:
-                case Term.Digit5:
-                case Term.Digit6:
-                case Term.Digit7:
-                case Term.Digit8:
-                case Term.Digit9:
-                case Term.LBr:
-                    return EP(T());
-                default: throw new ParseException();
-            }
+            if (symbol >= Term.Digit0 && symbol <= Term.Digit9 || symbol == Term.LBr)
+                return EP(T());
+            else
+                throw new ParseException();
         }
 
         public int EP(int inh = 0) /// E’ -> + T E’ | Λ
@@ -121,22 +102,10 @@ namespace LL1Trans
 
         public int T() /// T -> F T’
         {
-            switch (symbol)
-            {
-                case Term.Digit0:
-                case Term.Digit1:
-                case Term.Digit2:
-                case Term.Digit3:
-                case Term.Digit4:
-                case Term.Digit5:
-                case Term.Digit6:
-                case Term.Digit7:
-                case Term.Digit8:
-                case Term.Digit9:
-                case Term.LBr:
-                    return TP(F());
-                default: throw new ParseException();
-            }
+            if (symbol >= Term.Digit0 && symbol <= Term.Digit9 || symbol == Term.LBr)
+                return TP(F());
+            else
+                throw new ParseException();
         }
 
         public int TP(int inh = 1) /// T’ -> * F T’ | Λ
@@ -159,26 +128,19 @@ namespace LL1Trans
 
         public int F() /// F -> 2 | 3 | 4
         {
-            switch (symbol)
+            if (symbol >= Term.Digit0 && symbol <= Term.Digit9)
             {
-                case Term.Digit0:
-                case Term.Digit1:
-                case Term.Digit2:
-                case Term.Digit3:
-                case Term.Digit4:
-                case Term.Digit5:
-                case Term.Digit6:
-                case Term.Digit7:
-                case Term.Digit8:
-                case Term.Digit9:
-                    int synt = (int)symbol;
-                    symbol = yylex();
-                    return synt;
-                case Term.LBr:
-                    symbol = yylex();
-                    return E();
-                default: throw new ParseException();
+                int synt = (int)symbol;
+                symbol = yylex();
+                return synt;
             }
+            else if (symbol == Term.LBr)
+            {
+                symbol = yylex();
+                return E();
+            }
+            else
+                throw new ParseException();
         }
 
     }
