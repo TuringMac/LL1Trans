@@ -21,7 +21,7 @@ namespace LL1Trans
     /// </summary>
     public class Parser
     {
-        public enum Term
+        public enum Token
         {
             End = -1,
             Digit0 = 0,
@@ -42,7 +42,7 @@ namespace LL1Trans
             RBr = 201
         }
 
-        public Term symbol;
+        public Token symbol;
         public string row = "";
         int i = 0;
 
@@ -55,30 +55,30 @@ namespace LL1Trans
             return y;
         }
 
-        public Term yylex()
+        public Token yylex()
         {
             if (i == row.Length)
-                return Term.End;
+                return Token.End;
 
             char ch = row[i++];
             if (char.IsDigit(ch))
-                return (Term)int.Parse(ch.ToString());
+                return (Token)int.Parse(ch.ToString());
             else
                 switch (ch)
                 {
-                    case '+': Console.WriteLine($"Read: {ch}"); return Term.Plus;
-                    case '-': Console.WriteLine($"Read: {ch}"); return Term.Minus;
-                    case '*': Console.WriteLine($"Read: {ch}"); return Term.Mul;
-                    case '/': Console.WriteLine($"Read: {ch}"); return Term.Devide;
-                    case '(': Console.WriteLine($"Read: {ch}"); return Term.LBr;
-                    case ')': Console.WriteLine($"Read: {ch}"); return Term.RBr;
+                    case '+': Console.WriteLine($"Read: {ch}"); return Token.Plus;
+                    case '-': Console.WriteLine($"Read: {ch}"); return Token.Minus;
+                    case '*': Console.WriteLine($"Read: {ch}"); return Token.Mul;
+                    case '/': Console.WriteLine($"Read: {ch}"); return Token.Devide;
+                    case '(': Console.WriteLine($"Read: {ch}"); return Token.LBr;
+                    case ')': Console.WriteLine($"Read: {ch}"); return Token.RBr;
                     default: throw new ParseException();
                 }
         }
 
         public int E() /// E -> T E’
         {
-            if (symbol >= Term.Digit0 && symbol <= Term.Digit9 || symbol == Term.LBr)
+            if (symbol >= Token.Digit0 && symbol <= Token.Digit9 || symbol == Token.LBr)
                 return EP(T());
             else
                 throw new ParseException();
@@ -88,21 +88,21 @@ namespace LL1Trans
         {
             switch (symbol)
             {
-                case Term.Plus:
+                case Token.Plus:
                     symbol = yylex();
                     return EP(inh + T());
-                case Term.Minus:
+                case Token.Minus:
                     symbol = yylex();
                     return EP(inh - T());
-                case Term.RBr:
-                case Term.End: return inh; // E' -> Λ
+                case Token.RBr:
+                case Token.End: return inh; // E' -> Λ
                 default: throw new ParseException();
             }
         }
 
         public int T() /// T -> F T’
         {
-            if (symbol >= Term.Digit0 && symbol <= Term.Digit9 || symbol == Term.LBr)
+            if (symbol >= Token.Digit0 && symbol <= Token.Digit9 || symbol == Token.LBr)
                 return TP(F());
             else
                 throw new ParseException();
@@ -112,29 +112,29 @@ namespace LL1Trans
         {
             switch (symbol)
             {
-                case Term.Mul:
+                case Token.Mul:
                     symbol = yylex();
                     return TP(inh * F());
-                case Term.Devide:
+                case Token.Devide:
                     symbol = yylex();
                     return TP(inh / F());
-                case Term.Minus:
-                case Term.Plus:
-                case Term.RBr:
-                case Term.End: return inh; // T' -> Λ
+                case Token.Minus:
+                case Token.Plus:
+                case Token.RBr:
+                case Token.End: return inh; // T' -> Λ
                 default: throw new ParseException();
             }
         }
 
         public int F() /// F -> 2 | 3 | 4
         {
-            if (symbol >= Term.Digit0 && symbol <= Term.Digit9)
+            if (symbol >= Token.Digit0 && symbol <= Token.Digit9)
             {
                 int synt = (int)symbol;
                 symbol = yylex();
                 return synt;
             }
-            else if (symbol == Term.LBr)
+            else if (symbol == Token.LBr)
             {
                 symbol = yylex();
                 return E();
